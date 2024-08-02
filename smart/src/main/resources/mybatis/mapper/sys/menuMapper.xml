@@ -1,0 +1,107 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mango.smart.sys.menu.MenuMapper">
+
+    <select id="selectMenuList" parameterType="Map" resultType="Map">
+        WITH RECURSIVE
+			menu_hierarchy AS (
+				SELECT
+					menu_id,
+					menu_nm,
+					menu_url,
+					p_menu_id,
+					menu_icon,
+					menu_desc,
+					menu_srt,
+					enabled_flag,
+					CAST(menu_nm AS TEXT) AS PATH,
+					CAST(LPAD(CAST(menu_srt AS TEXT), 2, '0') AS TEXT) AS sort_path,
+					0 AS level
+				FROM
+					mg_menu
+				WHERE
+					p_menu_id IS NULL
+				UNION ALL
+				SELECT
+					m.menu_id,
+					m.menu_nm,
+					m.menu_url,
+					m.p_menu_id,
+					m.menu_icon,
+					m.menu_desc,
+					m.menu_srt,
+					m.enabled_flag,
+					mh.path || ' > ' || m.menu_nm,
+					mh.sort_path || '.' || LPAD(CAST(m.menu_srt AS TEXT), 2, '0'),
+					mh.level + 1
+				FROM
+					mg_menu m
+					INNER JOIN menu_hierarchy mh ON m.p_menu_id = mh.menu_id
+			)
+		SELECT
+			menu_id,
+			menu_nm,
+			menu_url,
+			p_menu_id,
+			menu_icon,
+			menu_desc,
+			menu_srt,
+			enabled_flag,
+			level,
+			PATH,
+			sort_path,
+			ROW_NUMBER() OVER (ORDER BY sort_path, menu_srt) AS row_num
+		FROM
+			menu_hierarchy;
+    </select>
+    
+    <insert id="insertMenu" parameterType="Map">
+        INSERT INTO mg_menu (
+            menu_id 
+           ,menu_nm
+           ,menu_url
+           ,p_menu_id
+           ,menu_icon
+           ,menu_desc
+           ,menu_srt
+           ,enabled_flag
+           ,created_by
+           ,creation_date
+           ,last_updated_by
+           ,last_update_date
+        ) VALUES (
+            nextval('mg_menu_s')
+           ,#{menu_nm}
+           ,#{menu_url}
+           ,#{p_menu_id}
+           ,#{menu_icon}
+           ,#{menu_desc}
+           ,#{menu_srt}
+           ,#{enabled_flag}
+           ,#{user_id}
+           ,current_timestamp
+           ,#{user_id}
+           ,current_timestamp
+        );
+    </insert>
+    
+    <update id="updateMenu" parameterType="Map">
+        UPDATE mg_menu
+           SET menu_nm = #{menu_nm}
+              ,menu_url = #{menu_url}
+              ,p_menu_id = #{p_menu_id}
+              ,menu_icon = #{menu_icon}
+              ,menu_desc = #{menu_desc}
+              ,menu_srt = #{menu_srt}
+              ,enabled_flag = #{enabled_flag}
+              ,last_updated_by = #{user_id}
+              ,last_update_date = current_timestamp
+         WHERE menu_id = #{menu_id};
+    </update>
+    
+    <delete id="deleteMenu" parameterType="Map">
+        DELETE FROM mg_menu
+         WHERE menu_id = #{menu_id};
+    </delete>
+    
+</mapper>

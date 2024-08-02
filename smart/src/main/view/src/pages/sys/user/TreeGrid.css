@@ -1,0 +1,15 @@
+.ag-row {
+    transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
+    max-height: 50px;
+    /* 일반적인 행 높이 */
+    opacity: 1;
+}
+
+.ag-row.ag-row-animating {
+    overflow: hidden;
+}
+
+.ag-row.ag-row-collapsed {
+    max-height: 0;
+    opacity: 0;
+}

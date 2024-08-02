@@ -1,0 +1,125 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mango.smart.sys.code.CodeMapper">
+
+    <select id="selectCodeList" parameterType="Map" resultType="Map">
+        SELECT code_id
+              ,code
+              ,code_name
+              ,code_desc
+              ,order_seq
+              ,enabled_flag
+              ,row_number() over(order by code_id) as row_num
+          FROM mg_code;
+    </select>
+    
+    <insert id="insertCode" parameterType="Map">
+        INSERT INTO mg_code (
+            code_id 
+           ,code
+           ,code_name
+           ,code_desc
+           ,order_seq
+           ,enabled_flag
+           ,created_by
+           ,creation_date
+           ,last_updated_by
+           ,last_update_date
+        ) VALUES (
+            nextval('mg_code_s')
+           ,#{code}
+           ,#{code_name}
+           ,#{code_desc}
+           ,#{order_seq}
+           ,#{enabled_flag}
+           ,#{user_id}
+           ,current_timestamp
+           ,#{user_id}
+           ,current_timestamp
+        );
+    </insert>
+    
+    <update id="updateCode" parameterType="Map">
+        UPDATE mg_code
+           SET code_name = #{code_name}
+              ,code_desc = #{code_desc}
+              ,order_seq = #{order_seq}
+              ,enabled_flag = #{enabled_flag}
+              ,last_updated_by = #{user_id}
+              ,last_update_date = current_timestamp
+         WHERE code_id = #{code_id};
+    </update>
+    
+    <delete id="deleteCode" parameterType="Map">
+        DELETE FROM mg_code
+         WHERE code_id = #{code_id};
+    </delete>
+    
+    <select id="selectCodeDetailList" parameterType="Map" resultType="Map">
+        SELECT code_detail_id
+              ,code_id
+              ,value
+              ,meaning
+              ,description
+              ,order_seq
+              ,enabled_flag
+              ,attribute_01
+              ,attribute_02
+              ,attribute_03
+              ,row_number() over(order by code_detail_id) as row_num
+          FROM mg_code_detail
+         WHERE code_id = #{code_id};
+    </select>
+    
+    <insert id="insertCodeDetail" parameterType="Map">
+        INSERT INTO mg_code_detail (
+            code_detail_id
+           ,code_id
+           ,value
+           ,meaning
+           ,description
+           ,order_seq
+           ,enabled_flag
+           ,attribute_01
+           ,attribute_02
+           ,attribute_03
+           ,created_by
+           ,creation_date
+           ,last_updated_by
+           ,last_update_date
+        ) VALUES (
+            nextval('mg_code_detail_s')
+           ,#{code_id}
+           ,#{value}
+           ,#{meaning}
+           ,#{description}
+           ,#{order_seq}
+           ,#{enabled_flag}
+           ,#{attribute_01}
+           ,#{attribute_02}
+           ,#{attribute_03}
+           ,#{user_id}
+           ,current_timestamp
+           ,#{user_id}
+           ,current_timestamp
+        );
+    </insert>
+    
+    <update id="updateCodeDetail" parameterType="Map">
+        UPDATE mg_code_detail
+           SET value = #{value}
+              ,meaning = #{meaning}
+              ,description = #{description}
+              ,order_seq = #{order_seq}
+              ,enabled_flag = #{enabled_flag}
+              ,last_updated_by = #{user_id}
+              ,last_update_date = current_timestamp
+         WHERE code_detail_id = #{code_detail_id};
+    </update>
+    
+    <delete id="deleteCodeDetail" parameterType="Map">
+        DELETE FROM mg_code_detail
+         WHERE code_detail_id = #{code_detail_id};
+    </delete>
+    
+</mapper>

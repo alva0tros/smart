@@ -1,0 +1,15 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mango.smart.sys.user.UserMapper">
+
+    <select id="selectUserByUserLoginId" parameterType="String" resultType="Map">
+        SELECT user_id
+              ,user_login_id as login_id
+              ,user_pwd as login_pw
+          FROM mg_user
+         WHERE user_login_id = #{login_id}
+           AND delete_yn = 'N'
+         LIMIT 1
+    </select>
+    
+</mapper>

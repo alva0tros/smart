@@ -1,0 +1,16 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mango.smart.config.security.SecurityMapper">
+ 
+    <select id="selectUserByUsername" parameterType="String" resultType="SecurityUser">
+        SELECT user_id
+             , user_login_id as username
+             , user_pwd as password
+             , user_nm as user_nm
+         FROM mg_user
+        WHERE user_login_id = #{username}
+          AND delete_yn = 'N'
+        LIMIT 1
+    </select>
+    
+</mapper>
